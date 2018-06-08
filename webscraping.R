@@ -14,7 +14,7 @@ library(stringr)
 # 3. Parse the html and get either: A. the text or B. more links
 
 # Consider Scenerio A: you have a link that contains all the information you need
-# For example, if you would like to scrape the email addresse of all SPS staff from the website: http://www.sps.ed.ac.uk/staff
+# For example, if you would like to scrape the email address of all SPS staff from the website: http://www.sps.ed.ac.uk/staff
 
 # Step 1: Download the html
 html <- read_html("http://www.sps.ed.ac.uk/staff")
@@ -27,8 +27,8 @@ html <- read_html("http://www.sps.ed.ac.uk/staff")
 # First approach, selecting the whole cell
 html %>% html_nodes(".person_contact") %>% html_text() 
 
-# Second approch, selecting the links by adding "a" after a space, it means selecting only the <a> tags.
-html %>% html_nodes(".person_contact a") %>% html_text()  # To get links, use html_attr("href") instead
+# Second approch, selecting the links by adding "a" after a space, it means selecting only the <a> tags. Use #html_text() to exclude html tags.
+html %>% html_nodes(".person_contact a") %>% html_text()  # To get links, use html_attr("href") instead of html_text()
 
 # Scenerio B: what if you are interested in what they are saying in their staff profile?
 # You need to get the links
@@ -39,6 +39,10 @@ staff.links <- html %>% html_nodes(".person_name a") %>% html_attr("href")
 
 # Now we have the link, but it would take forever to visit one by one
 # We need to write a loop to do step 1 to 3 for EVERY link
+
+for (i in c(1,3,5)){
+  print(i) # prints first object, second object, and last object
+}
 
 for (i in 1:length(staff.links[1:10])){ # note that I am only downloading the first 10
   profile <- read_html(staff.links[i]) # download the html from the link
@@ -71,7 +75,7 @@ for (i in 1:length(day.links[1:10])){
   article.links <- c(article.links, link)
 }
 
-for (i in 1:length(article.links[1:10])){ # I am just download the first 10th, just for demonstration
+for (i in 1:length(article.links[1:10])){ # I am just download the first 10, just for demonstration
   temp <- read_html(paste("http://www.dailymail.co.uk",article.links[i], sep="")) # download the html from the link
   temp %>% html_nodes("#js-article-text") %>% # select the node
     html_text() %>% # parse the text
@@ -79,7 +83,7 @@ for (i in 1:length(article.links[1:10])){ # I am just download the first 10th, j
 }
 
 # What if I only want news articles, but not other articles?
-# You can identity the *position* of the links containing the path "/news/"
+# You can identify the *position* of the links containing the path "/news/"
 grep("/news/", article.links)
 
 # And you can use that *position* to select only the links of news articles
@@ -119,7 +123,7 @@ for (i in 1:length(brexit.links[1:10])){ # I am just download the first 10th, ju
 brexit.textbased <- paste0("/textbased", brexit.links)
 brexit.textbased <- gsub("/article-", "/text-", brexit.textbased)
 
-for (i in 1:length(brexit.textbased[1:10])){ # I am just download the first 10th, just for demonstration
+for (i in 1:length(brexit.textbased[1:10])){ # I just download the first 10, just for demonstration
   temp <- read_html(paste("http://www.dailymail.co.uk",brexit.textbased[i], sep="")) # download the html from the link
   text <- temp %>% html_nodes(".article") %>% # select the node
     html_text() %>% 
@@ -128,7 +132,7 @@ for (i in 1:length(brexit.textbased[1:10])){ # I am just download the first 10th
 
 # You can also save the result as a vector object
 brexit.post <- c()
-for (i in 1:length(brexit.textbased)){ # I am just download the first 10th, just for demonstration
+for (i in 1:length(brexit.textbased)){ # I just download the first 10, just for demonstration
   temp <- read_html(paste("http://www.dailymail.co.uk",brexit.textbased[i], sep="")) # download the html from the link
   text <- temp %>% html_nodes(".article") %>% # select the node
     html_text() %>% 
